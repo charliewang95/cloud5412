@@ -12,7 +12,10 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
-def random_forest_train(data_path = None, model_path = 'Model/trio_2'):
+def test():
+    return 'i love pandas'
+
+def random_forest_train(data_path = None, model_path = 'Model/trio_3'):
     if data_path is None:
         dataframe = read_raw('ANSC_trio_Data.csv')
         dataframe = preprocess(dataframe)
@@ -74,13 +77,13 @@ def evaluate(y_pred, y_test):
     print("Recall: ", recall)
     print("F1 Score: ", F1)
 
-def Predict_from_ID(cowID, model_path='Model/trio_2'):
+def Predict_from_ID(cowID, model_path='Model/trio_3'):
     url = 'https://cow-rumination-data-app1.azurewebsites.net/'+str(cowID)
     print(url)
     r = requests.get(url = url)
     json_dict = json.loads(r.text)
     new_dict = {}
-
+    
     for feat in config.feature_list_same:
         if feat not in json_dict:
             if feat not in json_dict['entries'][0]:
@@ -96,11 +99,13 @@ def Predict_from_ID(cowID, model_path='Model/trio_2'):
                 new_dict[feat+str(time)] = config.mean_feat[feat+str(time)]
             else:
                 new_dict[feat+str(time)] = json_dict['entries'][time][feat]
-
+    
     df = pd.DataFrame(new_dict, index = ['ID'])
     clf = pickle.load(open(model_path, 'rb'))
+    
     y_pred=clf.predict(df[config.feature_list_all])
-    print(y_pred)
+    # print(str(y_pred[0]))
+    return str(y_pred[0])
 
 
 # Predict_from_ID(sys.argv[1])
